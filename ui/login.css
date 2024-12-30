@@ -3,3 +3,89 @@
     padding: 0px;
     box-sizing: border-box;
 }
+
+body{
+    height: 100vh;
+    width: 100%;
+    background-color: #a395c0;
+    display: flex;
+    justify-content: center;
+    /* border: 1px solid black; */
+}
+
+#container{
+    width: 100%;
+    margin: 60px 100px;
+    background-color: #e0dde0;
+    /* border: 1px solid black; */
+    border-radius: 30px;
+    box-shadow: 0px 3px 8px 0.1px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#img{
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border: 1px solid black; */
+    background : url(../ui/images/loginchat.png);
+    background-repeat: no-repeat;
+    background-position:center;
+    background-size: 100%;
+}
+img{
+    width: 200px;
+    height: 200px;
+}
+
+#container #input-field{
+    width: 40%;
+    margin-top: 2.5%;
+    margin-bottom: 2.5%;
+    height: 90%;
+    border-left: 5px solid rgba(0, 0, 0, 0.699);
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#username,#password{
+    margin-top: 5%;
+    padding: 3%;
+    border-radius: 10px;
+    width: 65%;
+    background-color: #ffe1ff9d;
+    border: 1.5 px solid #1b1b1d;
+}
+
+#login-btn{
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 18%;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: larger;
+    color: #FFE1FF;
+    background-color: #7E60BF ;
+    border: 0.5px solid black;
+}
+#login-btn:hover{
+    transform: scale(80%);
+    transition: 0.05s;
+}
+pre,h1{
+    color: #433878;
+    font-family: 'Times New Roman', Times, serif;
+}
+span{
+    font-size: large;
+}
+
+span:hover,#login-btn:hover{
+    cursor: pointer;
+}
