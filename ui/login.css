@@ -46,7 +46,8 @@ img{
     margin-top: 2.5%;
     margin-bottom: 2.5%;
     height: 90%;
-    border-left: 5px solid rgba(0, 0, 0, 0.699);
+    /* border-left: 5px solid rgba(0, 0, 0, 0.699); */
+    border-left: 5px solid #52497e;
     display: flex;
     gap: 20px;
     flex-direction: column;
@@ -54,13 +55,20 @@ img{
     align-items: center;
 }
 
+
 #username,#password{
-    margin-top: 5%;
+    margin-top: 3%;
     padding: 3%;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     width: 65%;
-    background-color: #ffe1ff9d;
-    border: 1.5 px solid #1b1b1d;
+    /* color: #433878; */
+    font-size: medium;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight:500;
+    background-color: #e0dde0;
+    border: none;
+    border-bottom: 2px solid #1b1b1d;
+    outline: none;
 }
 
 #login-btn{
@@ -77,6 +85,7 @@ img{
 #login-btn:hover{
     transform: scale(80%);
     transition: 0.05s;
+    cursor: pointer;
 }
 pre,h1{
     color: #433878;
@@ -86,6 +95,7 @@ span{
     font-size: large;
 }
 
-span:hover,#login-btn:hover{
+span:hover{
     cursor: pointer;
+    
 }
