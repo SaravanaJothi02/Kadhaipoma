@@ -85,6 +85,27 @@ img{
     transition: 0.05s;
     cursor: pointer;
 }
+
+#notification{
+    max-width: 50%;
+    min-width: 10%;
+    min-height: 40px;
+    top: -50px;
+    position: fixed;
+    background-color: #7E60BF;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+#notification #message{
+    background-color: #ffffff;
+    padding: 10px;
+    width: 95%;
+    font-size: 20px;
+    margin-left: 5%;
+    text-align: center;
+    border-radius: 10px;
+}
+
 pre,h1{
     color: #433878;
     font-family: 'Times New Roman', Times, serif;

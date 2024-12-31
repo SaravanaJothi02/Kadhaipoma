@@ -7,21 +7,23 @@
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
+    <div id="notification"><div id="message"><p></p></div></div>
     <div id="container">
-        <div id="notification"></div>
         <div id="img">
         </div>
         <div id="input-field">
             <h1>LOGIN</h1>
             <input type="text" id="username" placeholder="username">
             <input type="password" id="password" placeholder="password">
-            <input type="submit" id="login-btn" value="Login">
+            <input type="button" id="login-btn" onclick="login()" value="Login">
             <pre><span>Forget password</span> <strong>|</strong> <span>Sign up</span></pre>
         </div>
     </div>
     <script>
         username.focus();
         function login(){
+            getMsg("#ec2222","message jdhfkshf kfjdhf dkfhdsk kfsdfjsdh");
+            console.log("Login called");
             const username = document.getElementById("username");
             const password = document.getElementById("password");
             fetch("post-api",{
@@ -43,6 +45,14 @@
                     username.focus();
                 }
             })
+        }
+
+        function getMsg(color,message){
+            const alert = document.getElementById("notification");
+            alert.style.backgroundColor = color;
+            alert.firstChild.textContent = message;
+            alert.style.top = "40px";
+            setTimeout(()=>{alert.style.top = "-100px"},3000);
         }
     </script>
 </body>
