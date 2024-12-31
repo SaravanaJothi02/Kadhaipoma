@@ -11,12 +11,23 @@
     <div id="container">
         <div id="img">
         </div>
-        <div id="input-field">
-            <h1>LOGIN</h1>
-            <input type="text" id="username" placeholder="username">
-            <input type="password" id="password" placeholder="password">
-            <input type="button" id="login-btn" onclick="login()" value="Login">
-            <pre><span>Forget password</span> <strong>|</strong> <span>Sign up</span></pre>
+        <div id="login">
+            <form class="input-field" onsubmit="login()">
+                <h1 class="purple-letter">LOGIN</h1>
+                <input type="text" id="username" placeholder="username" required>
+                <input type="password" id="password" placeholder="password" required>
+                <input type="submit" id="login-btn" value="Login">
+                <pre class="purple-letter"><span onclick="forgetPassword()">Forget password</span> <strong>|</strong> <span onclick="signUp()">Sign up</span></pre>
+            </form>
+        </div>
+        <div id="forget">
+            <form class="input-field" onsubmit="showOtp()">
+                <h2 class="purple-letter">FORGET PASSWORD</h2>
+                <input type="email" id="emailId" placeholder="email" required>
+                <input type="number" id="otp" placeholder="OTP" required>
+                <input type="submit" name="get OTP" id="otp-btn">
+                <pre>I know my password <span class="purple-letter">login</span></pre>
+            </form>            
         </div>
     </div>
     <script>
@@ -53,6 +64,13 @@
             alert.firstChild.textContent = message;
             alert.style.top = "40px";
             setTimeout(()=>{alert.style.top = "-100px"},3000);
+        }
+
+        function forgetPassword(){
+            const login = document.getElementById("login");
+            const forget = document.getElementById("forget");
+            login.style.display = "none";
+            forget.style.display = "flex";
         }
     </script>
 </body>
