@@ -12,26 +12,64 @@
         <div id="img">
         </div>
         <div id="login">
-            <form class="input-field" onsubmit="login()">
+            <form id="login-form" class="input-field" onsubmit="login()">
                 <h1 class="purple-letter">LOGIN</h1>
-                <input type="text" id="username" placeholder="username" required>
-                <input type="password" id="password" placeholder="password" required>
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
                 <input type="submit" id="login-btn" value="Login">
                 <pre class="purple-letter"><span onclick="forgetPassword()">Forget password</span> <strong>|</strong> <span onclick="signUp()">Sign up</span></pre>
             </form>
         </div>
         <div id="forget">
-            <form class="input-field" onsubmit="showOtp()">
+            <form id="forget-form" class="input-field">
                 <h2 class="purple-letter">FORGET PASSWORD</h2>
-                <input type="email" id="emailId" placeholder="email" required>
-                <input type="number" id="otp" placeholder="OTP" required>
-                <input type="submit" name="get OTP" id="otp-btn">
+                <input type="email" id="emailId" placeholder="Email" required>
+                <input type="number" id="otp-field" placeholder="OTP">
+                <input type="submit" value="Get OTP" id="otp-btn">
                 <pre>I know my password <span class="purple-letter">login</span></pre>
             </form>            
         </div>
     </div>
     <script>
         username.focus();
+        const forgetForm = document.getElementById("forget-form");
+        let otpNum = 0;
+        forgetForm.addEventListener('submit',(event)=>{
+            event.preventDefault();
+            console.log("entered"); 
+            const email = document.getElementById("emailId");
+            const getOtp = document.getElementById("otp-btn");
+            const check = document.getElementById("check-btn");
+            const otpField = document.getElementById("otp-field");
+            if(otpField.style.display == "" || otpNum==0){
+                console.log("entered");
+                if(isValidEmail(email.textContent)){
+                    otpNum = Math.floor(Math.random() * 9000);
+                    console.log("otp : " + otpNum);
+                    setTimeout(()=>{
+                        otpNum = 0;
+                        console.log(otpNum);
+                        getOtp.value="Resend OTP"
+                    },10000);
+                    getMsg("#2df55f","OTP sent")
+                    otpField.style.display = "flex";
+                    getOtp.value="check";
+                }else{
+                    getMsg("rgb(226, 52, 52)","Email not found");
+                    email.value="";
+                    email.focus();
+                }   
+            }else if(otpNum!==0){
+                if(otpField.value==otpNum){
+                    getMsg("#2df55f","Authendication successfull");
+                }else{
+                    getMsg("rgb(226, 52, 52)","Authentication failed");
+                    otpField.value="";
+                    otpField.focus();
+                }
+            }
+            //otpField.style.display = "flex";
+        })
         function login(){
             getMsg("#ec2222","message jdhfkshf kfjdhf dkfhdsk kfsdfjsdh");
             console.log("Login called");
@@ -72,6 +110,11 @@
             login.style.display = "none";
             forget.style.display = "flex";
         }
+
+        function isValidEmail(email){
+            return true;
+        }
+
     </script>
 </body>
 </html>

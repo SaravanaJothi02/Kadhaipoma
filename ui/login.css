@@ -67,7 +67,7 @@ img{
 }
 
 
-#username,#password,#emailId{
+#username,#password,#emailId,#otp-field{
     margin-top: 3%;
     padding: 3%;
     width: 65%;
@@ -84,14 +84,15 @@ img{
     margin-top: 20px;
     padding: 10px;
     border-radius: 10px;
-    width: 18%;
+    min-width: 18%;
+    max-width: 50%;
     font-family: 'Times New Roman', Times, serif;
     font-size: larger;
     color: #FFE1FF;
     background-color: #7E60BF ;
     border: 0.5px solid black;
 }
-#login-btn:hover{
+#login-btn:hover,#otp-btn:hover{
     transform: scale(80%);
     transition: 0.05s;
     cursor: pointer;
@@ -99,7 +100,7 @@ img{
 
 #notification{
     max-width: 50%;
-    min-width: 10%;
+    min-width: 20%;
     min-height: 40px;
     top: -50px;
     position: fixed;
@@ -112,12 +113,13 @@ img{
     padding: 10px;
     width: 95%;
     font-size: 20px;
+    font-family: sans-serif;
     margin-left: 5%;
     text-align: center;
     border-radius: 10px;
 }
 
-#otp{
+#otp-field{
     display: none;
 }
 
@@ -125,6 +127,13 @@ img{
     color: #433878;
     font-family: 'Times New Roman', Times, serif;
 }
+
+input:-webkit-autofill {
+    background-color: #e0dde0 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #e0dde0 inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
 span{
     font-size: large;
 }
