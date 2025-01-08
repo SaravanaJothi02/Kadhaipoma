@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Register Page</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body class="flex">
+        <div class="register-container flex b">
+            <h2>Register</h2>
+            <div class="input-field b">
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="username"
+                />
+            </div>
+            <div class="input-field b">
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="password"
+                />
+            </div>
+            <div class="input-field b">
+                <input
+                    type="password"
+                    name="confirm-password"
+                    id="confirm-password"
+                    placeholder="confirm password"
+                />
+            </div>
+            <div class="btn">
+                <button type="submit" onclick="register()">register</button>
+            </div>
+            <p id="register">
+                <a href="">register</a>
+            </p>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
