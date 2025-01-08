@@ -1,0 +1,129 @@
+/* General Body Styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #E4B1F0; /* Light purple background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Center the Form Container */
+  .form-container {
+    width: 400px;
+    padding: 20px;
+    background-color: #FFE1FF; /* Soft pink background for the form */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    text-align: center;
+  }
+  
+  /* Form Step Styling */
+  .form-step {
+    display: none; /* Initially hidden */
+  }
+  
+  .form-step.active {
+    display: block; /* Show only active step */
+  }
+  
+  /* Form Headings */
+  h3 {
+    color: #7E60BF; /* Deep purple color for headings */
+    margin-bottom: 20px;
+  }
+  
+  /* Form Group Styling */
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    color: #7E60BF; /* Deep purple for labels */
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input, .form-group select {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #7E60BF;
+    border-radius: 5px;
+    background-color: #FFF; /* White input background */
+    color: #333; /* Dark text for readability */
+    font-size: 14px;
+  }
+  
+  /* Button Styling */
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+
+
+
+
+  
+  .button-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  button:disabled {
+    background-color: #d3d3d3; /* Light gray background */
+    color: #888; /* Gray text */
+    cursor: not-allowed; /* Disable hover and pointer */
+}
+
+#prevButton {
+  visibility: hidden; /* Use visibility to reserve space even when hidden */
+}
+
+/* Active Previous Button */
+#prevButton.active {
+  visibility: visible; /* Show the button when needed */
+}
+  
+  /* Previous Button */
+  #prevButton {
+    background-color: #E4B1F0; /* Deep purple background */
+    color: #FFF; 
+  }
+  
+  #prevButton:hover {
+    background-color:#7E60BF; /* Darker purple on hover */
+  }
+  
+  /* Next Button */
+  #nextButton {
+    background-color: #E4B1F0; /* Light purple background */
+    color:#FFF; /* Deep purple text */
+  }
+  
+  #nextButton:hover {
+   background-color: #7E60BF; /* Slightly darker light purple on hover */
+  }
+
+  
+  /* Submit Button (Optional) */
+  #submitButton {
+    background-color: #7E60BF; /* Deep purple background */
+    color: #FFF;
+    display: none; /* Hidden until last step */
+  }
+  
+  #submitButton:hover {
+    background-color: #5D4793; /* Darker purple on hover */
+  }
+  
