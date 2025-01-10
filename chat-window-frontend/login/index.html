@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Login Page</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body class="flex">
+        <div class="login-container flex b">
+            <h2>Login</h2>
+            <div class="input-field b">
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    placeholder="username"
+                />
+            </div>
+            <div class="input-field b">
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="password"
+                />
+            </div>
+            <div class="btn">
+                <button type="submit" onclick="login()">login</button>
+            </div>
+            <p id="register">
+                <a href="../register/index.html">register</a>
+            </p>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>

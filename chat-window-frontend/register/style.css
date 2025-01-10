@@ -1,0 +1,42 @@
+/* .b{
+    border: 1px solid black;
+} */
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.flex{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body{
+    height: 100vh;
+}
+
+.register-container{
+    flex-direction: column;
+    width: 350px;
+    padding: 20px;
+}
+
+.input-field{
+    width: 300px;
+    height: 45px;
+    margin: 10px;
+    border-bottom: 2px solid black;
+}
+
+input{
+    width: 97%;
+    height: 90%;
+    border: none;
+}
+
+button{
+    width: 50px;
+    height: 30px;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header>
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <h1 class="app-name">ChatApp</h1>
+        </header>
+        <!-- Main Section -->
+        <div class="main-container">
+            <!-- Contact List -->
+            <div id="contact-container">
+                <div id="contact-nav-bar">
+                    <h2 onclick="showContact()">Contacts</h2>
+                    <div>
+                        <button onclick="showNotification()">
+                            ~
+                        </button>
+                        <button onclick="search()">
+                            +
+                        </button>
+                    </div>
+                </div>
+                <ul class="notification" style="visibility: hidden;">
+                </ul>
+                <div class="add-friends" style="visibility: hidden;">
+                    <input type="text" name="search" id="search" placeholder="search here" onchange="searchUser()">
+                    <ul class="search-list">
+
+                    </ul>
+                </div>
+                <ul class="contact-list" style="visibility: visible;">
+                </ul>
+            </div>
+            <!-- Chat Window -->
+            <div class="chat-container">
+                <div id="messages" class="messages" style="visibility: hidden;">
+                    <div class="message received">Hi there!</div>
+                    <div class="message sent">Hello!</div>
+                </div>
+                <div class="message-input-container" style="visibility: hidden;">
+                    <textarea id="message-input" placeholder="Type your message..."></textarea>
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
