@@ -75,6 +75,16 @@ header {
     font-size: 18px;
     color: #0078D7;
 }
+ 
+h2:hover{
+    cursor: pointer;
+}
+
+#contact-nav-bar{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
 
 .contact-list {
     list-style: none;
@@ -86,11 +96,17 @@ header {
     padding: 10px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: 0.3s ease;
 }
 
 .contact-item:hover {
     background: #f0f0f0;
+}
+
+.search-contact-item{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
 }
 
 /* Chat Window Section */

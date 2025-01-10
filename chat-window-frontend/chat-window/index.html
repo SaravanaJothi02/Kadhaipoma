@@ -21,8 +21,26 @@
         <div class="main-container">
             <!-- Contact List -->
             <div id="contact-container">
-                <h2>Contacts</h2>
-                <ul class="contact-list">
+                <div id="contact-nav-bar">
+                    <h2 onclick="showContact()">Contacts</h2>
+                    <div>
+                        <button onclick="showNotification()">
+                            ~
+                        </button>
+                        <button onclick="search()">
+                            +
+                        </button>
+                    </div>
+                </div>
+                <ul class="notification" style="visibility: hidden;">
+                </ul>
+                <div class="add-friends" style="visibility: hidden;">
+                    <input type="text" name="search" id="search" placeholder="search here" onchange="searchUser()">
+                    <ul class="search-list">
+
+                    </ul>
+                </div>
+                <ul class="contact-list" style="visibility: visible;">
                 </ul>
             </div>
             <!-- Chat Window -->
@@ -40,4 +58,3 @@
     </div>
     <script src="script.js"></script>
 </body>
-</html>

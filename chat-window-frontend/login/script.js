@@ -1,71 +1,23 @@
-const db = {
-    contactlist : [
-        {
-            name:"Nagarajan",
-            id:"1",
-            passwrod : "Nagarajan"
-        },
-        {
-            name : "Sukumar",
-            id:"2",
-            passwrod : "Sukumar"
-        },
-        {
-            name:"Krishnamoorthy",
-            id:"3",
-            passwrod:"Krishnamoorthy"
-        },
-        {
-            name:"Karthi",
-            id:"4",
-            passwrod:"Karthi"
-        },
-        {
-            name:"Hari",
-            id:"5",
-            passwrod:"Hari"
-        },
-        {
-            name:"Rishi",
-            id:"6",
-            passwrod:"Rishi"
-        },
-        {
-            name:"Gowtham",
-            id:"7",
-            passwrod:"Gowtham"
-        },
-        {
-            name:"Subi",
-            id:"8",
-            passwrod:"Subi"
-        },
-        {
-            name:"SJ",
-            id:"9",
-            passwrod:"SJ"
-        },
-        {
-            name:"Harini",
-            id:"10",
-            passwrod:"Harini"
-        }
-    ]
-}
-
-
-
-function login(){
+async function login(){
     const username = document.getElementById('username').value;
     const passwrod = document.getElementById('password').value;
-    db.contactlist.forEach(user => {
-        if(user.name === username && user.passwrod === passwrod){
-            console.log("credential are correct")
-            sessionStorage.setItem("userId", user.id);
-            alert("login successfull")
-            window.location = "../chat-window/index.html"
-            return;
+    const json = {name: username, pass: passwrod};
+    try {
+        const resp = await fetch("http://localhost:8080/chat/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(json)
+        });
+        const res = await resp.json();
+        if (res["status"] === 200) {
+            alert(res["message"]);
+            sessionStorage.setItem("userId", res["userId"]);
+            window.location = "../chat-window/index.html";
+        } else {
+            alert(res["message"]);
         }
-    })
-    alert("username or password are incorrect...");
+    } catch (e) {
+        console.error("Error:", e);
+        alert("An error occurred. Please try again later.");
+    }
 }
