@@ -1,4 +1,4 @@
-package cors;
+package com.base.cors;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -12,7 +12,7 @@ public class CORSFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
 
         resp.setHeader("Access-Control-Allow-Origin", "*");
-        resp.setHeader("Access-Control-Allow-Methods", "GET");
+        resp.setHeader("Access-Control-Allow-Methods", "GET, POST");
         resp.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         resp.setHeader("Access-Control-Expose-Headers", "Authorization");
         resp.setHeader("Access-Control-Allow-Credentials", "true");

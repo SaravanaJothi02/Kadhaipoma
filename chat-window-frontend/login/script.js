@@ -1,7 +1,7 @@
 async function login(){
-    const username = document.getElementById('username').value;
+    const userMail = document.getElementById('mail').value;
     const passwrod = document.getElementById('password').value;
-    const json = {name: username, pass: passwrod};
+    const json = {mail: userMail, pass: passwrod};
     try {
         const resp = await fetch("http://localhost:8080/chat/login", {
             method: "POST",

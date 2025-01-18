@@ -1,4 +1,4 @@
-package db;
+package com.base.db;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class DataBase {
         return con;
     }
 
-    public static void setOnlineStatus(String id, char status){
+    public static void setOnlineStatus(String id, String status){
         getConnection();
         try {
             PreparedStatement preparedStatement = con.prepareStatement("UPDATE user SET status = '"+status+"' WHERE user_id = ?");
@@ -71,10 +71,11 @@ public class DataBase {
 
     }
 
-    public static boolean isUserExist(String userName) {
+    public static boolean isUserExist(String userMail) {
         getConnection();
         try{
-            String query = "SELECT * FROM user WHERE user_name = '"+userName+"';";
+//            String query = "SELECT * FROM user WHERE user_name = '"+userName+"';";
+            String query = "SELECT * FROM user WHERE user_mail = '"+userMail+"';";
             PreparedStatement ps = con.prepareStatement(query);
             return ps.executeQuery().next();
         } catch (SQLException e) {
@@ -83,17 +84,18 @@ public class DataBase {
         return false;
     }
 
-    public static String addUser(String userName, String password) {
+    public static String addUser(String userMail, String userName, String password) {
         getConnection();
         try{
-            String query = "INSERT INTO user (user_name, password, status) VALUES(?,?,'0')";
+            String query = "INSERT INTO user (user_mail, user_name, password, status) VALUES(?,?,?,'0')";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1,userName);
-            ps.setString(2, password);
+            ps.setString(1,userMail);
+            ps.setString(2, userName);
+            ps.setString(3, password);
             ps.executeUpdate();
-            query = "SELECT user_id FROM user WHERE user_name = ?;";
+            query = "SELECT user_id FROM user WHERE user_mail = ?;";
             ps = con.prepareStatement(query);
-            ps.setString(1, userName);
+            ps.setString(1, userMail);
             ResultSet resultSet = ps.executeQuery();
             String id = "";
             while(resultSet.next()){
@@ -106,12 +108,12 @@ public class DataBase {
         return null;
     }
 
-    public static String isValidUser(String userName, String password) {
+    public static String isValidUser(String userMail, String password) {
         getConnection();
         try{
-            String query = "SELECT * FROM user WHERE user_name = ? AND password = ?;";
+            String query = "SELECT * FROM user WHERE user_mail = ? AND password = ?;";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setString(1, userName);
+            ps.setString(1, userMail);
             ps.setString(2, password);
             ResultSet resultSet = ps.executeQuery();
             String id = "-1";
@@ -225,7 +227,7 @@ public class DataBase {
     public static void addContact(String userId, String friendId) {
         getConnection();
         try{
-            String query = "INSERT INTO contact VALUES(?,?)";
+            String query = "INSERT INTO com.base.chat.contact VALUES(?,?)";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, userId);
             ps.setString(2, friendId);

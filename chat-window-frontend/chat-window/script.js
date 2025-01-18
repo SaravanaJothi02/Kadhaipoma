@@ -1,7 +1,7 @@
 const json = {
     contactlist: [],
     messages: [],
-    requestList: []
+    requestList: [] 
 };
 
 let totalMessage = json.messages.length;
@@ -58,6 +58,8 @@ async function loadContact() {
     try {
         const resp = await fetch(`http://localhost:8080/chat/get-contact-list?userId=${userId}`);
     
+
+        
         const contactList = await resp.json();
     
         contactList.forEach(user => {

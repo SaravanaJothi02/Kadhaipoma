@@ -40,3 +40,9 @@ button{
     width: 50px;
     height: 30px;
 }
+
+.btn{
+    display: flex;
+    width: inherit;
+    justify-content: space-evenly;
+}

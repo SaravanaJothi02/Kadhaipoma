@@ -1,6 +1,6 @@
-package search;
+package com.base.chat.search;
 
-import db.DataBase;
+import com.base.db.DataBase;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
