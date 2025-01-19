@@ -116,7 +116,7 @@ public class UserDAO {
      * @param userId unique id of user
      */
     public void setOnlineStatus(String userId, boolean isOnline) {
-        String query = "UPDATE user SET = ? WHERE user_id = ?";
+        String query = "UPDATE user SET status = ? WHERE user_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, (isOnline) ? "active" : "inactive");
             ps.setString(2, userId);

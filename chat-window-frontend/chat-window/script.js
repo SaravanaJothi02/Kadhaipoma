@@ -1,13 +1,14 @@
 const json = {
     contactlist: [],
-    messages: [],
-    requestList: [] 
+    messages:[],
+    requestList: [],
 };
 
 let totalMessage = json.messages.length;
 
 let userId = sessionStorage.getItem("userId");
 let receiverId = null;
+const BASE_URL = "http://localhost:8080/chat";
 const ws = new WebSocket(`ws://localhost:8080/chat/${userId}`);
 
 ws.onopen = () => {
@@ -17,10 +18,10 @@ ws.onopen = () => {
 
 ws.onmessage = (event) => {
     const message = event.data;
-    console.log("message ==> "+message);
-    if(message.startsWith("friend request")){
+    console.log("message ==> " + message);
+    if (message.startsWith("friend request")) {
         addFriendRequest(message.split(":"));
-    } else if(message.startsWith("add contact")){
+    } else if (message.startsWith("add contact")) {
         const contacts = document.querySelector(".contact-list");
         const child = document.createElement("li");
         child.className = "contact-item";
@@ -28,20 +29,19 @@ ws.onmessage = (event) => {
         child.textContent = message.split(":")[2];
         contacts.appendChild(child);
         json.contactlist.push({
-            name : message.split(":")[2],
-            id : message.split(":")[1]
+            name: message.split(":")[2],
+            id: message.split(":")[1],
         });
     }
     const messagesDiv = document.getElementById("messages");
     messagesDiv.innerHTML += `<p>${message}</p>`;
     const msg = event.data.split(":");
-    json.messages.push({
-        msgId: `${++totalMessage}`,
-        senderId: `${msg[0]}`,
-        receiverId: `${msg[1]}`,
-        msgContent: `${msg[2]}`,
-    });
-    // console.log(msg);
+    // json.messages.push({
+    //     msgId: `${++totalMessage}`,
+    //     senderId: `${msg[0]}`,
+    //     receiverId: `${msg[1]}`,
+    //     msgContent: `${msg[2]}`,
+    // });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
     loadChat();
 };
@@ -54,22 +54,35 @@ async function loadContact() {
     // console.log(userId);
     const contacts = document.querySelector(".contact-list");
     const contactlist = json.contactlist;
-
+    const template = document.getElementById("contact-list-template");
     try {
-        const resp = await fetch(`http://localhost:8080/chat/get-contact-list?userId=${userId}`);
-    
-
-        
+        const resp = await fetch(
+            `${BASE_URL}/get-contact-list?userId=${userId}`
+        );
         const contactList = await resp.json();
-    
-        contactList.forEach(user => {
+        console.log(contactList);
+        contactList.forEach((data) => {
+            const card = template.content.cloneNode(true);
+            card.querySelector(".contact-item").setAttribute(
+                "data-id",
+                data.user.userId
+            );
+            card.querySelector(".name").textContent = data.user.userName;
+            card.querySelector(".msg").textContent = data.message.text;
+            if (data.message.status === "DELIVERED") {
+                card.querySelector(".msg").className = "msg-delivered";
+            }
+            contacts.appendChild(card);
+        });
+
+        contactList.forEach((user) => {
             json.contactlist.push({
-                name : user["name"],
-                id : user["id"]
+                name: user["name"],
+                id: user["id"],
             });
-        })
+        });
     } catch (error) {
-        alert("contact fetch error...")
+        alert(error + "contact fetch error...");
     }
 
     contactlist.forEach((contact) => {
@@ -127,7 +140,34 @@ function highlightSelectedContact(selectedContact) {
     loadChat();
 }
 
-function loadChat() {
+async function loadChat() {
+    const json = {messages:[]};
+    try {
+        const req = await fetch(`${BASE_URL}/get-message`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: userId,
+                contactId: receiverId,
+            }),
+        });
+        const resp = await req.json();
+        console.log("resp  " + resp);
+        if (req.ok) {
+            resp.forEach((msg) => {
+                json.messages.push({
+                    senderId: msg.senderId,
+                    receiverId: msg.receiverId,
+                    msgContent: msg.text,
+                });
+            });
+        } else {
+            alert("somthing wrong in fetching message");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    console.log(json.messages);
     const messages = json.messages.filter(
         (msg) =>
             (msg.senderId == userId && msg.receiverId == receiverId) ||
@@ -147,17 +187,17 @@ function loadChat() {
     });
 }
 
-function showContact(){
+function showContact() {
     document.querySelector(".notification").style = "visibility: hidden;";
     document.querySelector(".add-friends").style = "visibility: hidden;";
     document.querySelector(".contact-list").style = "visibility: visible;";
 }
-function showNotification(){
+function showNotification() {
     document.querySelector(".notification").style = "visibility: visible;";
     document.querySelector(".add-friends").style = "visibility: hidden;";
     document.querySelector(".contact-list").style = "visibility: hidden;";
 }
-function search(){
+function search() {
     document.querySelector(".notification").style = "visibility: hidden;";
     document.querySelector(".add-friends").style = "visibility: visible;";
     document.querySelector(".contact-list").style = "visibility: hidden;";
@@ -165,43 +205,45 @@ function search(){
 
 async function searchUser() {
     console.log("search called");
-    const response = await fetch(`http://localhost:8080/chat/search?key=${document.getElementById('search').value}`);
+    const response = await fetch(
+        `${BASE_URL}/search?key=${document.getElementById("search").value}`
+    );
 
     const list = await response.json();
     console.log(list);
 
-    let searchList = document.querySelector('.search-list');
+    let searchList = document.querySelector(".search-list");
     searchList.replaceChildren();
     let frdId = [];
-    json.contactlist.forEach(u => frdId.push(u.id));
-    list.forEach(user => {
-        if(userId != user["id"] && !frdId.includes(user["id"])){
+    json.contactlist.forEach((u) => frdId.push(u.id));
+    list.forEach((user) => {
+        if (userId != user["id"] && !frdId.includes(user["id"])) {
             const child = document.createElement("li");
-            const name = document.createElement('span');
-            const btn = document.createElement('button');
+            const name = document.createElement("span");
+            const btn = document.createElement("button");
             child.className = "search-contact-item contact-item";
             child.setAttribute("data-id", user["id"]);
             name.textContent = user["name"];
-            btn.innerText = (json.requestList.includes(user["id"])) ? "~": "req";
-            btn.addEventListener('click', async () => {
+            btn.innerText = json.requestList.includes(user["id"]) ? "~" : "req";
+            btn.addEventListener("click", async () => {
                 console.log("req");
                 try {
-                    const req = await fetch("http://localhost:8080/chat/send-request", {
-                        method : "POST",
-                        headers : {"Content-Type" : "application/json"},
-                        body : JSON.stringify({
-                            uId : userId,
-                            fId : user["id"]
-                        })
+                    const req = await fetch(`${BASE_URL}/send-request`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            uId: userId,
+                            fId: user["id"],
+                        }),
                     });
                     const resp = await req.json();
-                    if(resp["status"] == 200){
+                    if (resp["status"] == 200) {
                         json.requestList.push(user["id"]);
                     } else {
-                        alert("Internal Error")
-                    }  
+                        alert("Internal Error");
+                    }
                 } catch (error) {
-                    alert(error)
+                    alert(error);
                 }
             });
             console.log(child);
@@ -209,35 +251,35 @@ async function searchUser() {
             child.appendChild(btn);
             searchList.appendChild(child);
         }
-    })
+    });
 }
 
-function addFriendRequest(req){
+function addFriendRequest(req) {
     const senderId = req[1];
     const name = req[2];
-    const noti = document.querySelector('.notification');
+    const noti = document.querySelector(".notification");
     const child = document.createElement("li");
     child.className = "contact-item";
     child.setAttribute("data-id", senderId);
-    const n = document.createElement('span');
+    const n = document.createElement("span");
     n.innerText = name;
-    const abtn = document.createElement('button');
-    const rbtn = document.createElement('button');
+    const abtn = document.createElement("button");
+    const rbtn = document.createElement("button");
     abtn.innerText = "a";
     rbtn.innerText = "r";
-    abtn.addEventListener('click', async (event) => {
+    abtn.addEventListener("click", async (event) => {
         try {
-            const req = await fetch("http://localhost:8080/chat/friend-request-accept", {
-                method : "POST",
-                headers : {"Content-Type":"application/json"},
-                body : JSON.stringify({
-                    uId : userId,
-                    fId : senderId,
-                    status : "accept"
-                })
-            })
+            const req = await fetch(`${BASE_URL}/friend-request-accept`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    uId: userId,
+                    fId: senderId,
+                    status: "accept",
+                }),
+            });
             const resp = await req.json();
-            if(resp["status"] == 200){
+            if (resp["status"] == 200) {
                 alert("friend added successfully...");
                 const contacts = document.querySelector(".contact-list");
                 const contactsChild = document.createElement("li");
@@ -246,30 +288,30 @@ function addFriendRequest(req){
                 contactsChild.textContent = name;
                 contacts.appendChild(contactsChild);
                 json.contactlist.push({
-                    name : name,
-                    id : senderId
+                    name: name,
+                    id: senderId,
                 });
                 child.remove();
             } else {
-                alert("Try agin later...")
+                alert("Try agin later...");
             }
         } catch (error) {
-            alert(error)
+            alert(error);
         }
-    })
-    rbtn.addEventListener('click', async (event) => {
+    });
+    rbtn.addEventListener("click", async (event) => {
         try {
-            const req = await fetch("http://localhost:8080/chat/friend-request-accept", {
-                method : "POST",
-                headers : {"Content-Type":"application/json"},
-                body : JSON.stringify({
-                    uId : userId,
-                    fId : senderId,
-                    status : "rejected"
-                })
-            })
+            const req = await fetch(`${BASE_URL}/friend-request-accept`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    uId: userId,
+                    fId: senderId,
+                    status: "rejected",
+                }),
+            });
             const resp = await req.json();
-            if(resp["status"] == 202){
+            if (resp["status"] == 202) {
                 alert("request rejected successfully");
                 const contacts = document.querySelector(".contact-list");
                 const contactsChild = document.createElement("li");
@@ -279,16 +321,14 @@ function addFriendRequest(req){
                 contacts.appendChild(contactsChild);
                 child.remove();
             } else {
-                alert("Try again later...")
+                alert("Try again later...");
             }
         } catch (error) {
-            alert(error)
+            alert(error);
         }
-    })
+    });
     child.appendChild(n);
     child.appendChild(abtn);
     child.appendChild(rbtn);
     noti.appendChild(child);
 }
-
-

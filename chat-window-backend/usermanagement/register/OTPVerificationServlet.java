@@ -18,8 +18,8 @@ public class OTPVerificationServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         StringBuilder data = new StringBuilder();
         String line;
-        try(BufferedReader reader = req.getReader()) {
-            while((line = reader.readLine()) != null){
+        try (BufferedReader reader = req.getReader()) {
+            while ((line = reader.readLine()) != null) {
                 data.append(line);
             }
         }
@@ -27,23 +27,26 @@ public class OTPVerificationServlet extends HttpServlet {
         JSONObject json = new JSONObject(data.toString());
         String OTP = json.getString("OTP");
         String mail = json.getString("mail");
-        try(Jedis jedis = RedisConfig.getJedisPool().getResource()){
-            String storedOtp = jedis.get("otp:"+mail);
-            if(storedOtp == null){
+        try (Jedis jedis = RedisConfig.getJedisPool().getResource()) {
+            String storedOtp = jedis.get("otp:" + mail);
+            if (storedOtp == null) {
+                resp.setStatus(HttpServletResponse.SC_REQUEST_TIMEOUT);
                 resp.getWriter().write(
-                        "{\"status\":202,\"error\":\"OTP expired\"}"
+                        "{\"error\":\"OTP expired\"}"
                 );
             } else if (!OTP.equals(storedOtp)) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 resp.getWriter().write(
-                        "{\"status\":202,\"error\":\"OTP is Incorrect\"}"
+                        "{\"error\":\"OTP is Incorrect\"}"
                 );
             } else {
+                resp.setStatus(HttpServletResponse.SC_OK);
                 resp.getWriter().write(
-                        "{\"status\":200,\"message\":\"OTP Valid\"}"
+                        "{\"message\":\"OTP Valid\"}"
                 );
             }
-        } catch (Exception e){
-            resp.getWriter().write("Error : "+e.getMessage());
+        } catch (Exception e) {
+            resp.getWriter().write("Error : " + e.getMessage());
         }
     }
 }

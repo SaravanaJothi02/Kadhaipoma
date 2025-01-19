@@ -51,14 +51,14 @@ public class FriendsDAO {
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 String friendId = rs.getString("user_id").equals(userId) ?
-                        rs.getString("friend_id") : userId;
+                        rs.getString("friend_id") : rs.getString("user_id");
 //                HashMap<User, Message> contactWithLastMessage = new HashMap<>();
 //                contactWithLastMessage.put(
 //                        userDAO.getUserById(friendId).get(),
 //                        messageDAO.getLastMessage(friendId, userId).get()
 //                );
                 contactListWithLastMessage.put(userDAO.getUserById(friendId).get(),
-                        messageDAO.getLastMessage(friendId, userId).get());
+                        messageDAO.getLastMessage(friendId, userId).isPresent() ? messageDAO.getLastMessage(friendId, userId).get() : null);
             }
         } catch(SQLException e){
             System.out.println("getContactList exception :"+e.getMessage());

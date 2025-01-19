@@ -51,7 +51,7 @@ async function verifyOTP(email, otp) {
             })
         });
         const resp = await req.json();
-        if(resp["status"] == 200){
+        if(req.ok){
             alert(resp["message"]);
             return true;
         } else {
@@ -92,10 +92,3 @@ async function getOTP() {
 }
 
 
-
-/*
-DAO --> servlet --> service --> DAO --> DB
-command
-factory
-
-*/

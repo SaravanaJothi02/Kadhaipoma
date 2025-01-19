@@ -9,7 +9,7 @@ async function login(){
             body: JSON.stringify(json)
         });
         const res = await resp.json();
-        if (res["status"] === 200) {
+        if (resp.ok) {
             alert(res["message"]);
             sessionStorage.setItem("userId", res["userId"]);
             window.location = "../chat-window/index.html";

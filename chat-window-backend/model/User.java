@@ -14,7 +14,7 @@ public class User {
         this.id = id;
         this.mail = mail;
         this.userName = userName;
-        this.status = UserStatus.valueOf(status);
+        this.status = UserStatus.valueOf(status.toUpperCase());
         this.cratedAt = cratedAt;
         this.lastSeen = lastSeen;
     }
@@ -57,5 +57,17 @@ public class User {
 
     public void setLastSeen(Timestamp lastSeen) {
         this.lastSeen = lastSeen;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", mail='" + mail + '\'' +
+                ", userName='" + userName + '\'' +
+                ", status=" + status +
+                ", cratedAt=" + cratedAt +
+                ", lastSeen=" + lastSeen +
+                '}';
     }
 }

@@ -7,93 +7,108 @@
 ## **Setup Instructions**
 
 ### **1. Add Dependencies**
-Clone the repository and add the following dependencies to your `pom.xml` file:
+Clone the repository and add the `pom.xml` to your project.
+Server : Apache Tomcat/9.0.97
 
 ```
-<dependencies>
-  <dependency>
-    <groupId>javax.servlet</groupId>
-    <artifactId>javax.servlet-api</artifactId>
-    <version>4.0.1</version>
-    <scope>provided</scope>
-  </dependency>
-  <dependency>
-    <groupId>javax.websocket</groupId>
-    <artifactId>javax.websocket-api</artifactId>
-    <version>1.1</version>
-  </dependency>
-  <dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-    <version>8.0.32</version>
-  </dependency>
-  <dependency>
-    <groupId>org.json</groupId>
-    <artifactId>json</artifactId>
-    <version>20231013</version>
-  </dependency>
-</dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.kathaipoma</groupId>
+    <artifactId>chat</artifactId>
+    <packaging>war</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>chat Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>5.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.20.0</version> <!-- Use the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.32</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20231013</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>chat</finalName>
+    </build>
+</project>
+
 ```
 setup database
 user :
 ```
 CREATE TABLE user (
-    user_id INT PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_mail VARCHAR(255) NOT NULL,
     user_name VARCHAR(50) NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    status ENUM('1', '0') DEFAULT NULL
+    password VARCHAR(255) NOT NULL,
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
-
-message:
+messages:
 ```
-CREATE TABLE message (
+CREATE TABLE messages (
     msg_id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
-    text TEXT DEFAULT NULL,
-    status ENUM('1', '0') DEFAULT NULL
+    text TEXT,
+    status ENUM('sent', 'delivered', 'read', 'deleted') DEFAULT 'sent',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES user(user_id),
+    FOREIGN KEY (receiver_id) REFERENCES user(user_id)
 );
 ```
 
-contact :
+friends : 
 ```
-CREATE TABLE contact (
-    user_id INT,
-    friend_id INT
+CREATE TABLE friends (
+    friend_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    friend_id INT NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (friend_id) REFERENCES user(user_id)
 );
 ```
 
-request :
-```
-CREATE TABLE request(
-    req_id INT PRIMARY KEY AUTO_INCREMENT,
-    uesr_id INT,
-    friend_id INT,
-    status ENUM('pending', 'success', 'rejected') DEFAULT 'pending',
-    receive_status ENUM('send','not-send')
-);
-```
-
-default users:
-```
-+---------+----------------+----------------+--------+
-| user_id | user_name      | password       | status |
-+---------+----------------+----------------+--------+
-|       1 | Nagarajan      | Nagarajan      | 0      |
-|       2 | Sukumar        | Sukumar        | 0      |
-|       3 | Krishnamoorthy | Krishnamoorthy | 0      |
-|       4 | Karthi         | Karthi         | 0      |
-|       5 | Hari           | Hari           | 0      |
-|       6 | Rishi          | Rishi          | 0      |
-|       7 | Gowtham        | Gowtham        | 0      |
-|       8 | Subi           | Subi           | 0      |
-|       9 | SJ             | SJ             | 0      |
-|      10 | Harini         | Harini         | 0      |
-|      17 | raja           | raja           | 0      |
-|      20 | Krish          | krish          | 0      |
-+---------+----------------+----------------+--------+
-```
-
-
-feature update : register
+under development : friend request

@@ -9,6 +9,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -61,15 +62,15 @@ public class ChatWebSocket {
         String senderId = msg[0];
         String receiverId = msg[1];
         String text = msg[2];
-        String timeStamp = msg[3];
+        LocalTime timeStamp = LocalTime.now();
         MessageDAO messageDAO = new MessageDAO(DataBaseConnection.getConnection());
         if(activeUsers.containsKey(receiverId)){
-            messageDAO.storeMessage(senderId, receiverId, text, "delivered", timeStamp);
+            messageDAO.storeMessage(senderId, receiverId, text, "delivered");
 //            DataBase.storeMessage(senderId, receiverId, text, "1");
             Session receiverSession = activeUsers.get(receiverId);
             receiverSession.getBasicRemote().sendText(message);
         } else {
-            messageDAO.storeMessage(senderId, receiverId, text, "sent", timeStamp);
+            messageDAO.storeMessage(senderId, receiverId, text, "sent");
 //            DataBase.storeMessage(senderId, receiverId, text, "0");
             System.out.println("receiver is offline...");
         }
