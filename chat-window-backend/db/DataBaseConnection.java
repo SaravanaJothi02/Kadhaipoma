@@ -10,13 +10,8 @@ public class DataBaseConnection {
 
     private static Connection connection;
 
-    public static Connection getConnection(){
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver"); // ClassCastException
-            connection =  DriverManager.getConnection(URL, USERNAME, PASSWORD); // SQL Exception
-        } catch (Exception e){
-            System.out.println("DB connection error...");
-        }
-        return connection;
+    public static Connection getConnection() throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver"); // ClassCastException
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD); // SQL Exception
     }
 }

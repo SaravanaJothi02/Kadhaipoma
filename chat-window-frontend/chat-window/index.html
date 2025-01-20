@@ -17,7 +17,7 @@
             </div>
             <div>
                 <h1 class="app-name">ChatApp</h1>
-                <button onclick="logout()">logout</button>
+                <button onclick="logout()">Logout</button>
             </div>
         </header>
         <!-- Main Section -->
@@ -27,38 +27,32 @@
                 <div id="contact-nav-bar">
                     <h2 onclick="showContact()">Contacts</h2>
                     <div>
-                        <button onclick="showNotification()">
-                            ~
-                        </button>
-                        <button onclick="search()">
-                            +
-                        </button>
+                        <button onclick="showNotification()">~</button>
+                        <button onclick="search()">+</button>
                     </div>
                 </div>
-                <ul class="notification" style="visibility: hidden;">
-                </ul>
-                <div class="add-friends" style="visibility: hidden;">
-                    <input type="text" name="search" id="search" placeholder="search here" onchange="searchUser()">
-                    <ul class="search-list">
-
-                    </ul>
+                <ul class="notification" style="display: none;"></ul>
+                <div class="add-friends" style="display: none;">
+                    <input type="text" name="search" id="search" placeholder="Search here" onchange="searchUser()">
+                    <ul class="search-list"></ul>
                 </div>
-                <ul class="contact-list" style="visibility: visible;">
+                <ul class="contact-list" style="display: block;">
                     <template id="contact-list-template">
                         <div class="contact-item">
-                            <div class="name">name</div>
-                            <div class="msg">messge</div>
+                            <div class="name">Name</div>
+                            <div class="msg">Message</div>
                         </div>
                     </template>
                 </ul>
             </div>
             <!-- Chat Window -->
             <div class="chat-container">
-                <div id="messages" class="messages" style="visibility: hidden;">
+                <div id="messages" class="messages" style="display: none;">
+                    <!-- Example messages -->
                     <div class="message received">Hi there!</div>
                     <div class="message sent">Hello!</div>
                 </div>
-                <div class="message-input-container" style="visibility: hidden;">
+                <div class="message-input-container" style="display: none;">
                     <textarea id="message-input" placeholder="Type your message..."></textarea>
                     <button onclick="sendMessage()">Send</button>
                 </div>
@@ -67,14 +61,16 @@
     </div>
     <script>
         window.onload = () => {
-            if(sessionStorage.getItem("userId") === null){
+            if (sessionStorage.getItem("userId") === null) {
                 window.location = "../login/index.html";
             }
         }
-        function logout(){
+
+        function logout() {
             sessionStorage.removeItem("userId");
             window.location = "../login/index.html";
         }
     </script>
     <script src="script.js"></script>
 </body>
+</html>

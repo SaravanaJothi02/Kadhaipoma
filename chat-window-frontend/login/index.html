@@ -9,25 +9,31 @@
     <body class="flex">
         <div class="login-container flex b">
             <h2>Login</h2>
-            <div class="input-field b">
-                <input
-                    type="text"
-                    name="mail"
-                    id="mail"
-                    placeholder="mail"
-                />
-            </div>
-            <div class="input-field b">
-                <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    placeholder="password"
-                />
-            </div>
-            <div class="btn">
-                <button type="submit" onclick="login()">login</button>
-            </div>
+            <form>
+                <div class="input-field b">
+                    <label for="mail">Email</label>
+                    <input
+                        type="text"
+                        name="mail"
+                        id="mail"
+                        placeholder="mail"
+                        aria-label="Email"
+                    />
+                </div>
+                <div class="input-field b">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="password"
+                        aria-label="Password"
+                    />
+                </div>
+                <div class="btn">
+                    <button type="button" onclick="login()">login</button>
+                </div>
+            </form>
             <p id="register">
                 <a href="../register/index.html">register</a>
             </p>

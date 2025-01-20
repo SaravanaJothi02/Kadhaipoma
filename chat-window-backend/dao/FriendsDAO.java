@@ -1,7 +1,5 @@
 package com.base.dao;
 
-import com.base.model.Friend;
-import com.base.model.FriendsStatus;
 import com.base.model.Message;
 import com.base.model.User;
 
@@ -43,7 +41,7 @@ public class FriendsDAO {
 
     public HashMap<User, Message> getContactList(String userId) {
         HashMap<User, Message> contactListWithLastMessage = new HashMap<>();
-        String query = "SELECT user_id, friend_id FROM friends WHERE status = 'accepted' AND user_id = ? OR friend_id = ?";
+        String query = "SELECT user_id, friend_id FROM friends WHERE status = 'accepted' AND (user_id = ? OR friend_id = ?)";
         try(PreparedStatement ps = connection.prepareStatement(query)){
             ps.setString(1, userId);
             ps.setString(1, userId);
@@ -52,11 +50,6 @@ public class FriendsDAO {
             while(rs.next()){
                 String friendId = rs.getString("user_id").equals(userId) ?
                         rs.getString("friend_id") : rs.getString("user_id");
-//                HashMap<User, Message> contactWithLastMessage = new HashMap<>();
-//                contactWithLastMessage.put(
-//                        userDAO.getUserById(friendId).get(),
-//                        messageDAO.getLastMessage(friendId, userId).get()
-//                );
                 contactListWithLastMessage.put(userDAO.getUserById(friendId).get(),
                         messageDAO.getLastMessage(friendId, userId).isPresent() ? messageDAO.getLastMessage(friendId, userId).get() : null);
             }
@@ -64,5 +57,29 @@ public class FriendsDAO {
             System.out.println("getContactList exception :"+e.getMessage());
         }
         return contactListWithLastMessage;
+    }
+
+    public void addFriendRequest(String userId, String friendId) {
+        String query = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, userId);
+            ps.setString(2, friendId);
+            ps.executeUpdate();
+        } catch (SQLException e){
+            System.out.println("addFriendRequest exception : "+e.getMessage());
+        }
+    }
+
+
+    public void updateFriendRequest(String userId, String friendId, String action) {
+        String query = "UPDATE friends SET status = ? WHERE user_id = ? AND friend_id = ?";
+        try(PreparedStatement ps = connection.prepareStatement(query)){
+            ps.setString(1, action);
+            ps.setString(2, friendId);
+            ps.setString(3, userId);
+            ps.executeUpdate();
+        } catch (SQLException e){
+            System.out.println("updateFriendRequest exception : "+e.getMessage());
+        }
     }
 }

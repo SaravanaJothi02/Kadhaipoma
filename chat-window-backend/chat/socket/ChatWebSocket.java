@@ -21,15 +21,10 @@ public class ChatWebSocket {
     public static void sendFriendRequestNotification(String userId, String friendId, String name) throws IOException {
         if(activeUsers.containsKey(friendId)){
             activeUsers.get(friendId).getBasicRemote().sendText("friend request:"+userId+":"+name);
-            DataBase.addFriendRequest(userId, friendId, "pending");
-            DataBase.friendRequestReceiverStatus("send", friendId);
-        } else {
-            DataBase.addFriendRequest(userId, friendId, "pending");
         }
     }
 
     public static void addContact(String userId, String friendId, String name) throws IOException {
-        DataBase.addContact(userId, friendId);
         if(activeUsers.containsKey(friendId)){
             activeUsers.get(friendId).getBasicRemote().sendText("add contact:"+userId+":"+name);
         }
@@ -38,10 +33,15 @@ public class ChatWebSocket {
     @OnOpen
     public void onOpen(@PathParam("userId") String userId, Session session){
         activeUsers.put(userId, session);
-        UserDAO userDAO = new UserDAO(DataBaseConnection.getConnection());
-        userDAO.setOnlineStatus(userId, true);
-        MessageDAO messageDAO = new MessageDAO(DataBaseConnection.getConnection());
-        messageDAO.setMessageDelivered(userId);
+        try {
+            UserDAO userDAO = new UserDAO(DataBaseConnection.getConnection());
+            userDAO.setOnlineStatus(userId, true);
+            MessageDAO messageDAO = new MessageDAO(DataBaseConnection.getConnection());
+            messageDAO.setMessageDelivered(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("onOpen exception : "+e.getMessage());
+        }
         /*
 //        List<String> balanceNotification = DataBase.getBalanceNotification(userId);
         try {
@@ -53,6 +53,7 @@ public class ChatWebSocket {
             throw new RuntimeException(e);
         }
          */
+        
         System.out.println("user " + userId + " connected...");
     }
 
@@ -62,25 +63,32 @@ public class ChatWebSocket {
         String senderId = msg[0];
         String receiverId = msg[1];
         String text = msg[2];
-        LocalTime timeStamp = LocalTime.now();
-        MessageDAO messageDAO = new MessageDAO(DataBaseConnection.getConnection());
-        if(activeUsers.containsKey(receiverId)){
-            messageDAO.storeMessage(senderId, receiverId, text, "delivered");
-//            DataBase.storeMessage(senderId, receiverId, text, "1");
-            Session receiverSession = activeUsers.get(receiverId);
-            receiverSession.getBasicRemote().sendText(message);
-        } else {
-            messageDAO.storeMessage(senderId, receiverId, text, "sent");
-//            DataBase.storeMessage(senderId, receiverId, text, "0");
-            System.out.println("receiver is offline...");
+        try {
+            MessageDAO messageDAO = new MessageDAO(DataBaseConnection.getConnection());
+            if(activeUsers.containsKey(receiverId)){
+                messageDAO.storeMessage(senderId, receiverId, text, "delivered");
+                Session receiverSession = activeUsers.get(receiverId);
+                receiverSession.getBasicRemote().sendText(message);
+            } else {
+                messageDAO.storeMessage(senderId, receiverId, text, "sent");
+                System.out.println("receiver is offline...");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("onMessage exception : "+e.getMessage());
         }
     }
 
     @OnClose
     public void onClose(@PathParam("userId") String userId, Session session){
         activeUsers.remove(userId, session);
-        UserDAO userDAO = new UserDAO(DataBaseConnection.getConnection());
-        userDAO.setOnlineStatus(userId, false);
+        try {
+            UserDAO userDAO = new UserDAO(DataBaseConnection.getConnection());
+            userDAO.setOnlineStatus(userId, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("onClose exception : "+e.getMessage());
+        }
         System.out.println("user " + userId + " disconnected...");
     }
 

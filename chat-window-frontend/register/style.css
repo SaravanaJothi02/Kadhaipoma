@@ -25,15 +25,21 @@ body{
 
 .input-field{
     width: 300px;
-    height: 45px;
+    height: 65px; /* Increased height to accommodate labels */
     margin: 10px;
     border-bottom: 2px solid black;
 }
 
 input{
     width: 97%;
-    height: 90%;
+    height: 60%; /* Adjusted height to fit within the new input-field height */
     border: none;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 button{

@@ -111,4 +111,4 @@ CREATE TABLE friends (
 );
 ```
 
-under development : friend request
+under development : msg scroller, contact list updated dynamically.. and some bug..

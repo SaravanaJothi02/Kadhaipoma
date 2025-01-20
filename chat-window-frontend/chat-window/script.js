@@ -1,11 +1,10 @@
 const json = {
     contactlist: [],
-    messages:[],
+    messages: [],
     requestList: [],
 };
 
 let totalMessage = json.messages.length;
-
 let userId = sessionStorage.getItem("userId");
 let receiverId = null;
 const BASE_URL = "http://localhost:8080/chat";
@@ -22,28 +21,10 @@ ws.onmessage = (event) => {
     if (message.startsWith("friend request")) {
         addFriendRequest(message.split(":"));
     } else if (message.startsWith("add contact")) {
-        const contacts = document.querySelector(".contact-list");
-        const child = document.createElement("li");
-        child.className = "contact-item";
-        child.setAttribute("data-id", message.split(":")[1]);
-        child.textContent = message.split(":")[2];
-        contacts.appendChild(child);
-        json.contactlist.push({
-            name: message.split(":")[2],
-            id: message.split(":")[1],
-        });
+        addContact(message.split(":"));
+    } else {
+        displayMessage(message);
     }
-    const messagesDiv = document.getElementById("messages");
-    messagesDiv.innerHTML += `<p>${message}</p>`;
-    const msg = event.data.split(":");
-    // json.messages.push({
-    //     msgId: `${++totalMessage}`,
-    //     senderId: `${msg[0]}`,
-    //     receiverId: `${msg[1]}`,
-    //     msgContent: `${msg[2]}`,
-    // });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    loadChat();
 };
 
 ws.onclose = () => {
@@ -51,16 +32,13 @@ ws.onclose = () => {
 };
 
 async function loadContact() {
-    // console.log(userId);
     const contacts = document.querySelector(".contact-list");
-    const contactlist = json.contactlist;
     const template = document.getElementById("contact-list-template");
     try {
         const resp = await fetch(
             `${BASE_URL}/get-contact-list?userId=${userId}`
         );
         const contactList = await resp.json();
-        console.log(contactList);
         contactList.forEach((data) => {
             const card = template.content.cloneNode(true);
             card.querySelector(".contact-item").setAttribute(
@@ -74,26 +52,12 @@ async function loadContact() {
             }
             contacts.appendChild(card);
         });
-
         contactList.forEach((user) => {
-            json.contactlist.push({
-                name: user["name"],
-                id: user["id"],
-            });
+            json.contactlist.push({ name: user["name"], id: user["id"] });
         });
     } catch (error) {
-        alert(error + "contact fetch error...");
+        alert("Error fetching contacts: " + error);
     }
-
-    contactlist.forEach((contact) => {
-        if (contact.id !== userId) {
-            const child = document.createElement("li");
-            child.className = "contact-item";
-            child.setAttribute("data-id", contact.id);
-            child.textContent = contact.name;
-            contacts.appendChild(child);
-        }
-    });
     setupContactListeners();
 }
 
@@ -106,12 +70,7 @@ function sendMessage() {
         receiverId: `${receiverId}`,
         msgContent: `${input.value}`,
     });
-    const messageContainer = document.querySelector(".messages");
-    const child = document.createElement("li");
-    child.className =
-        msg.senderId == userId ? "message received" : "message sent";
-    child.textContent = input.value;
-    messageContainer.appendChild(child);
+    displayMessage(msg);
     ws.send(msg);
     input.value = "";
 }
@@ -120,13 +79,11 @@ function setupContactListeners() {
     const contacts = document.querySelectorAll(".contact-item");
     contacts.forEach((contact) => {
         contact.addEventListener("click", () => {
-            document.querySelector("#messages").style = "visibility: visible";
-            document.querySelector(".message-input-container").style =
-                "visibility: visible";
+            document.querySelector("#messages").style.display = "block";
+            document.querySelector(".message-input-container").style.display =
+                "flex";
             receiverId = contact.getAttribute("data-id");
             highlightSelectedContact(contact);
-
-            // console.log(`Chatting with User ID: ${receiverId}`);
         });
     });
 }
@@ -141,112 +98,130 @@ function highlightSelectedContact(selectedContact) {
 }
 
 async function loadChat() {
-    const json = {messages:[]};
+    const messages = [];
     try {
         const req = await fetch(`${BASE_URL}/get-message`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                userId: userId,
-                contactId: receiverId,
-            }),
+            body: JSON.stringify({ userId: userId, contactId: receiverId }),
         });
         const resp = await req.json();
-        console.log("resp  " + resp);
         if (req.ok) {
             resp.forEach((msg) => {
-                json.messages.push({
+                messages.push({
                     senderId: msg.senderId,
                     receiverId: msg.receiverId,
                     msgContent: msg.text,
                 });
             });
         } else {
-            alert("somthing wrong in fetching message");
+            alert("Error fetching messages");
         }
     } catch (error) {
-        console.log(error);
+        console.log("Error: " + error);
     }
-    console.log(json.messages);
-    const messages = json.messages.filter(
-        (msg) =>
-            (msg.senderId == userId && msg.receiverId == receiverId) ||
-            (msg.senderId == receiverId && msg.receiverId == userId)
-    );
+    displayMessages(messages);
+}
+
+function displayMessages(messages) {
     const messageContainer = document.querySelector(".messages");
     messageContainer.replaceChildren();
     messages.forEach((msg) => {
         const child = document.createElement("li");
-        if (msg.senderId == userId) {
-            child.className = "message sent";
-        } else if (msg.receiverId == userId) {
-            child.className = "message received";
-        }
+        child.className =
+            msg.senderId == userId ? "message sent" : "message received";
         child.textContent = msg.msgContent;
         messageContainer.appendChild(child);
     });
 }
 
+function displayMessage(msg) {
+    console.log("msg ==> " + msg);
+    const message = msg.split(":");
+    const messagesDiv = document.getElementById("messages");
+    const child = document.createElement("li");
+    child.className =
+        message[0] == userId ? "message sent" : "message received";
+    child.textContent = message[2];
+    messagesDiv.appendChild(child);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    document.querySelector(`[data-id="${(message[0] !== userId) ? message[0] : message[1]}"]`).querySelector(".msg").textContent = message[2];
+}
+
+function addContact(messageParts) {
+    const contacts = document.querySelector(".contact-list");
+    const template = document.getElementById("contact-list-template");
+    const card = template.content.cloneNode(true);
+    card.querySelector(".contact-item").setAttribute(
+        "data-id",
+        messageParts[1]
+    );
+    card.querySelector(".name").textContent = messageParts[2];
+    card.querySelector(".msg").textContent = "No messages";
+    card.querySelector(".contact-item").addEventListener("click", () => {
+        document.querySelector("#messages").style.display = "block";
+        document.querySelector(".message-input-container").style.display =
+            "flex";
+        receiverId = card
+            .querySelector(".contact-item")
+            .getAttribute("data-id");
+        highlightSelectedContact(card.querySelector(".contact-item"));
+    });
+    contacts.appendChild(card);
+    // const child = document.createElement("li");
+    // child.className = "contact-item";
+    // child.setAttribute("data-id", messageParts[1]);
+    // child.textContent = messageParts[2];
+    // contacts.appendChild(child);
+    json.contactlist.push({ name: messageParts[2], id: messageParts[1] });
+}
+
 function showContact() {
-    document.querySelector(".notification").style = "visibility: hidden;";
-    document.querySelector(".add-friends").style = "visibility: hidden;";
-    document.querySelector(".contact-list").style = "visibility: visible;";
+    document.querySelector(".notification").style.display = "none";
+    document.querySelector(".add-friends").style.display = "none";
+    document.querySelector(".contact-list").style.display = "block";
 }
+
 function showNotification() {
-    document.querySelector(".notification").style = "visibility: visible;";
-    document.querySelector(".add-friends").style = "visibility: hidden;";
-    document.querySelector(".contact-list").style = "visibility: hidden;";
+    document.querySelector(".notification").style.display = "block";
+    document.querySelector(".add-friends").style.display = "none";
+    document.querySelector(".contact-list").style.display = "none";
 }
+
 function search() {
-    document.querySelector(".notification").style = "visibility: hidden;";
-    document.querySelector(".add-friends").style = "visibility: visible;";
-    document.querySelector(".contact-list").style = "visibility: hidden;";
+    document.querySelector(".notification").style.display = "none";
+    document.querySelector(".add-friends").style.display = "block";
+    document.querySelector(".contact-list").style.display = "none";
 }
 
 async function searchUser() {
-    console.log("search called");
-    const response = await fetch(
-        `${BASE_URL}/search?key=${document.getElementById("search").value}`
-    );
+    try {
+        const response = await fetch(
+            `${BASE_URL}/search?key=${document.getElementById("search").value}`
+        );
+        const list = await response.json();
+        displaySearchResults(list);
+    } catch (error) {
+        console.log("Error: " + error);
+    }
+}
 
-    const list = await response.json();
-    console.log(list);
-
-    let searchList = document.querySelector(".search-list");
+function displaySearchResults(list) {
+    const searchList = document.querySelector(".search-list");
     searchList.replaceChildren();
-    let frdId = [];
-    json.contactlist.forEach((u) => frdId.push(u.id));
+    const frdId = json.contactlist.map((u) => u.id);
     list.forEach((user) => {
-        if (userId != user["id"] && !frdId.includes(user["id"])) {
+        let uId = user["id"];
+        let uName = user["name"];
+        if (userId != uId && !frdId.includes(uId)) {
             const child = document.createElement("li");
             const name = document.createElement("span");
             const btn = document.createElement("button");
             child.className = "search-contact-item contact-item";
-            child.setAttribute("data-id", user["id"]);
-            name.textContent = user["name"];
-            btn.innerText = json.requestList.includes(user["id"]) ? "~" : "req";
-            btn.addEventListener("click", async () => {
-                console.log("req");
-                try {
-                    const req = await fetch(`${BASE_URL}/send-request`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            uId: userId,
-                            fId: user["id"],
-                        }),
-                    });
-                    const resp = await req.json();
-                    if (resp["status"] == 200) {
-                        json.requestList.push(user["id"]);
-                    } else {
-                        alert("Internal Error");
-                    }
-                } catch (error) {
-                    alert(error);
-                }
-            });
-            console.log(child);
+            child.setAttribute("data-id", uId);
+            name.textContent = uName;
+            btn.innerText = json.requestList.includes(uId) ? "~" : "req";
+            btn.addEventListener("click", () => sendFriendRequest(uId));
             child.appendChild(name);
             child.appendChild(btn);
             searchList.appendChild(child);
@@ -254,7 +229,30 @@ async function searchUser() {
     });
 }
 
+async function sendFriendRequest(friendId) {
+    try {
+        const req = await fetch(`${BASE_URL}/friend-request`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: userId,
+                friendId: String(friendId),
+            }),
+        });
+        console.log(req.ok);
+        if (req.ok) {
+            alert("Request sent successfully...");
+        } else {
+            const resp = await req.json();
+            alert("Error: " + resp.message);
+        }
+    } catch (error) {
+        console.log("Error: " + error);
+    }
+}
+
 function addFriendRequest(req) {
+    console.log(req);
     const senderId = req[1];
     const name = req[2];
     const noti = document.querySelector(".notification");
@@ -267,68 +265,59 @@ function addFriendRequest(req) {
     const rbtn = document.createElement("button");
     abtn.innerText = "a";
     rbtn.innerText = "r";
-    abtn.addEventListener("click", async (event) => {
-        try {
-            const req = await fetch(`${BASE_URL}/friend-request-accept`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    uId: userId,
-                    fId: senderId,
-                    status: "accept",
-                }),
-            });
-            const resp = await req.json();
-            if (resp["status"] == 200) {
-                alert("friend added successfully...");
-                const contacts = document.querySelector(".contact-list");
-                const contactsChild = document.createElement("li");
-                contactsChild.className = "contact-item";
-                contactsChild.setAttribute("data-id", senderId);
-                contactsChild.textContent = name;
-                contacts.appendChild(contactsChild);
-                json.contactlist.push({
-                    name: name,
-                    id: senderId,
-                });
-                child.remove();
-            } else {
-                alert("Try agin later...");
-            }
-        } catch (error) {
-            alert(error);
-        }
-    });
-    rbtn.addEventListener("click", async (event) => {
-        try {
-            const req = await fetch(`${BASE_URL}/friend-request-accept`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    uId: userId,
-                    fId: senderId,
-                    status: "rejected",
-                }),
-            });
-            const resp = await req.json();
-            if (resp["status"] == 202) {
-                alert("request rejected successfully");
-                const contacts = document.querySelector(".contact-list");
-                const contactsChild = document.createElement("li");
-                contactsChild.className = "contact-item";
-                contactsChild.setAttribute("data-id", senderId);
-                contactsChild.textContent = name;
-                contacts.appendChild(contactsChild);
-                child.remove();
-            } else {
-                alert("Try again later...");
-            }
-        } catch (error) {
-            alert(error);
-        }
-    });
+    abtn.addEventListener("click", () =>
+        handleFriendRequest(senderId, name, "accepted")
+    );
+    rbtn.addEventListener("click", () =>
+        handleFriendRequest(senderId, name, "rejected")
+    );
     child.appendChild(n);
     child.appendChild(abtn);
     child.appendChild(rbtn);
     noti.appendChild(child);
+}
+
+async function handleFriendRequest(senderId, name, status) {
+    try {
+        const req = await fetch(`${BASE_URL}/friend-request`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                userId: userId,
+                friendId: senderId,
+                action: status,
+            }),
+        });
+        const resp = await req.json();
+        if (req.ok && status === "accepted") {
+            alert("Friend added successfully...");
+            addContactToList(senderId, name);
+        } else if (req.ok) {
+            alert("Request rejected successfully");
+        } else {
+            alert(resp.message);
+        }
+    } catch (error) {
+        alert("Error: " + error);
+    }
+}
+
+function addContactToList(senderId, name) {
+    const contacts = document.querySelector(".contact-list");
+    const template = document.getElementById("contact-list-template");
+    const card = template.content.cloneNode(true);
+    card.querySelector(".contact-item").setAttribute("data-id", senderId);
+    card.querySelector(".name").textContent = name;
+    card.querySelector(".msg").textContent = "No messages";
+    card.querySelector(".contact-item").addEventListener("click", () => {
+        document.querySelector("#messages").style.display = "block";
+        document.querySelector(".message-input-container").style.display =
+            "flex";
+        receiverId = card
+            .querySelector(".contact-item")
+            .getAttribute("data-id");
+        highlightSelectedContact(card.querySelector(".contact-item"));
+    });
+    contacts.appendChild(card);
+    json.contactlist.push({ name: name, id: senderId });
 }

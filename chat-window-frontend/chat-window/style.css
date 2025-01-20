@@ -75,12 +75,12 @@ header {
     font-size: 18px;
     color: #0078D7;
 }
- 
-h2:hover{
+
+h2:hover {
     cursor: pointer;
 }
 
-#contact-nav-bar{
+#contact-nav-bar {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -99,11 +99,11 @@ h2:hover{
     transition: 0.3s ease;
 }
 
-.msg{
+.msg {
     font-weight: 400;
 }
 
-.msg-delivered{
+.msg-delivered {
     font-weight: 700;
 }
 
@@ -111,7 +111,7 @@ h2:hover{
     background: #f0f0f0;
 }
 
-.search-contact-item{
+.search-contact-item {
     display: flex;
     align-items: baseline;
     justify-content: space-between;

@@ -46,7 +46,7 @@ public class ContactMessageServlet extends HttpServlet {
         }
     }
 
-    private static List<Message> getMessages(HttpServletRequest req) throws IOException {
+    private static List<Message> getMessages(HttpServletRequest req) throws Exception {
         StringBuilder jsonString = new StringBuilder();
         String line;
         try (BufferedReader reader = req.getReader()) {

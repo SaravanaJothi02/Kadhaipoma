@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDAO {
@@ -124,5 +126,29 @@ public class UserDAO {
         } catch (SQLException e) {
             System.out.println("setOnlineStatus exception : " + e.getMessage());
         }
+    }
+
+    public List<User> searchUsers(String key) {
+        List<User> users = new ArrayList<>();
+        try {
+            String query = "SELECT user_id, user_name, user_mail, status, created_at, updated_at FROM user WHERE user_name LIKE ?";
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1, "%" + key + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User(
+                        rs.getInt("user_id"),
+                        rs.getString("user_mail"),
+                        rs.getString("user_name"),
+                        rs.getString("status"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at")
+                );
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            System.out.println("searchUsers exception : " + e.getMessage());
+        }
+        return users;
     }
 }

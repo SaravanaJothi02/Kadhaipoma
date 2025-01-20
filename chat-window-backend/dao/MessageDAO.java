@@ -38,7 +38,6 @@ public class MessageDAO {
      * @param receiverId receiver unique id
      * @param text message content
      * @param status message status({@link com.base.model.MessageStatus})
-     * @param timeStamp message timestamp
      */
     public void storeMessage(String senderId, String receiverId, String text, String status) {
         String query = "INSERT INTO messages (sender_id, receiver_id, text, status) VALUES (?,?,?,?)";
