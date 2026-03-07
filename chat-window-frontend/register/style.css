@@ -1,0 +1,54 @@
+/* .b{
+    border: 1px solid black;
+} */
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+.flex{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body{
+    height: 100vh;
+}
+
+.register-container{
+    flex-direction: column;
+    width: 350px;
+    padding: 20px;
+}
+
+.input-field{
+    width: 300px;
+    height: 65px; /* Increased height to accommodate labels */
+    margin: 10px;
+    border-bottom: 2px solid black;
+}
+
+input{
+    width: 97%;
+    height: 60%; /* Adjusted height to fit within the new input-field height */
+    border: none;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+button{
+    width: 50px;
+    height: 30px;
+}
+
+.btn{
+    display: flex;
+    width: inherit;
+    justify-content: space-evenly;
+}
